@@ -1,11 +1,9 @@
-# Definicja customowej roli
+# Definicja Twojej poprawionej roli
 resource "grafana_role" "sre_observer" {
   name        = "SRE Observer Custom"
-  description = "Role for SREs to view everything but change nothing"
   uid         = "sre-observer-custom"
-  version     = 1
+  version     = 2
 
-  # Lista uprawnień (Permissions)
   permissions {
     action = "folders:read"
     scope  = "folders:*"
@@ -20,8 +18,8 @@ resource "grafana_role" "sre_observer" {
   }
 }
 
-# Przypisanie roli do Teamu (który stworzyłeś wcześniej)
-resource "grafana_role_assignment" "sre_observer_assignment" {
+# Przypisujemy tę rolę WSZYSTKIM zespołom z listy
+resource "grafana_role_assignment" "mass_assignment" {
   role_uid = grafana_role.sre_observer.uid
-  teams    = [var.devops_team_id] # ID przekazane z modułu identity
+  teams = values(var.teams_map)
 }

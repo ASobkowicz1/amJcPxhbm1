@@ -10,6 +10,22 @@ variable "saml_idp_metadata_url" {
 }
 
 variable "teams_config" {
-  type    = list(string)
-  default = ["DevOps", "Network", "Security", "SRE"]
+  description = "Mapa zespolow"
+  type = map(object({
+    external_group = string # Nazwa roli w Auth0
+  }))
+  default = {
+    "DevOps" = {
+      external_group = "team_devops" # Użytkownik z rolą 'admin' w Auth0 trafi tutaj
+    },
+    "Network" = {
+      external_group = "team_network"
+    },
+    "Security" = {
+      external_group = "team_security"
+    },
+    "SRE" = {
+      external_group = "team_sre"
+    }
+  }
 }

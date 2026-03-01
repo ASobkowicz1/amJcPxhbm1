@@ -15,21 +15,3 @@ resource "grafana_sso_settings" "saml_sso_settings" {
     role_values_admin          = "admin"
   }
 }
-
-#USERS AND TEAMS
-resource "grafana_team" "team_devops" {
-  name     = "DevOps"
-}
-
-resource "grafana_team" "team_network" {
-  name     = "Network"
-}
-
-#FOLDERS
-resource "grafana_folder" "team_devops" {
-  title    = "DevOps Team"
-}
-
-resource "grafana_folder" "team_network" {
-  title    = "Network Team"
-}
