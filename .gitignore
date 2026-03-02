@@ -11,3 +11,6 @@
 
 # Specyficzne dla Terraform Cloud
 .terraform.lock.hcl
+
+# Prywatne
+.role*
