@@ -15,9 +15,11 @@ module "identity" {
 }
 
 module "rbac" {
-  source = "./modules/access-control"
+  source = "./modules/rbac"
   providers = {
     grafana = grafana.stack
   }
-  teams_map = module.identity.teams_data
+  teams_map        = module.identity.teams_data
+  grafana_url      = module.stack.stack_url
+  grafana_sa_token = module.stack.sa_token_key
 }

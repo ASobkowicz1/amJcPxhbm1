@@ -16,7 +16,7 @@ variable "teams_config" {
   }))
   default = {
     "DevOps" = {
-      external_group = "team_devops" # Użytkownik z rolą 'admin' w Auth0 trafi tutaj
+      external_group = "team_devops"
     },
     "Network" = {
       external_group = "team_network"
