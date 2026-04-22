@@ -1,5 +1,5 @@
 {
-  "apiVersion": "dashboard.grafana.app/v2beta1",
+  "apiVersion": "dashboard.grafana.app/v2",
   "kind": "Dashboard",
   "metadata": {
     "name": "dbff85zxz06ozkc"
@@ -66,7 +66,7 @@
           "description": "",
           "id": 1,
           "links": [],
-          "title": "New panel",
+          "title": "New panel1223",
           "vizConfig": {
             "group": "timeseries",
             "kind": "VizConfig",
@@ -127,6 +127,10 @@
                 "overrides": []
               },
               "options": {
+                "annotations": {
+                  "clustering": -1,
+                  "multiLane": false
+                },
                 "legend": {
                   "calcs": [],
                   "displayMode": "list",
@@ -140,7 +144,7 @@
                 }
               }
             },
-            "version": "13.0.0-22751934439"
+            "version": "13.1.0-24556818486"
           }
         }
       }
@@ -165,7 +169,20 @@
         ]
       }
     },
-    "links": [],
+    "links": [
+      {
+        "asDropdown": false,
+        "icon": "external link",
+        "includeVars": false,
+        "keepTime": false,
+        "tags": [],
+        "targetBlank": true,
+        "title": "Source (GitHub)",
+        "tooltip": "View source file in repository",
+        "type": "link",
+        "url": "https://github.com/ASobkowicz1/amJcPxhbm1/blob/main/dashboards/new-dashboard-2026-03-06-wn172.json"
+      }
+    ],
     "liveNow": false,
     "preload": false,
     "tags": [],
