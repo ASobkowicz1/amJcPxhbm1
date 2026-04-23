@@ -1,0 +1,1025 @@
+{
+  "apiVersion": "dashboard.grafana.app/v2",
+  "kind": "Dashboard",
+  "metadata": {
+    "name": "node-logs",
+    "generation": 1,
+    "creationTimestamp": "2026-04-16T13:53:24Z",
+    "labels": {},
+    "annotations": {}
+  },
+  "spec": {
+    "annotations": [
+      {
+        "kind": "AnnotationQuery",
+        "spec": {
+          "query": {
+            "kind": "DataQuery",
+            "group": "grafana",
+            "version": "v0",
+            "spec": {},
+            "labels": {
+              "grafana.app/export-label": "grafana-1"
+            }
+          },
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "builtIn": true,
+          "legacyOptions": {
+            "type": "dashboard"
+          }
+        }
+      },
+      {
+        "kind": "AnnotationQuery",
+        "spec": {
+          "query": {
+            "kind": "DataQuery",
+            "group": "loki",
+            "version": "v0",
+            "datasource": {
+              "name": "${loki_datasource}"
+            },
+            "spec": {}
+          },
+          "enable": true,
+          "hide": true,
+          "iconColor": "light-purple",
+          "name": "Critical system event",
+          "legacyOptions": {
+            "expr": "{job=~\"integrations/(node_exporter|unix)\",cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\", transport=\"kernel\", level=\"emerg\"}",
+            "tagKeys": "cluster,job,instance,level",
+            "titleFormat": "Critical system event"
+          }
+        }
+      },
+      {
+        "kind": "AnnotationQuery",
+        "spec": {
+          "query": {
+            "kind": "DataQuery",
+            "group": "prometheus",
+            "version": "v0",
+            "datasource": {
+              "name": "${prometheus_datasource}"
+            },
+            "spec": {}
+          },
+          "enable": true,
+          "hide": true,
+          "iconColor": "light-blue",
+          "name": "Kernel update",
+          "legacyOptions": {
+            "expr": "changes(\nsum by (instance) (\n    group by (instance,release) (node_uname_info{job=~\"integrations/(node_exporter|unix)\",cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\"})\n    )\n[$__interval:1m] offset -$__interval) > 1\n",
+            "step": "5m",
+            "tagKeys": "cluster,job,instance",
+            "textFormat": "",
+            "titleFormat": "Kernel update"
+          }
+        }
+      },
+      {
+        "kind": "AnnotationQuery",
+        "spec": {
+          "query": {
+            "kind": "DataQuery",
+            "group": "prometheus",
+            "version": "v0",
+            "datasource": {
+              "name": "${prometheus_datasource}"
+            },
+            "spec": {}
+          },
+          "enable": true,
+          "hide": true,
+          "iconColor": "light-purple",
+          "name": "OOMkill",
+          "legacyOptions": {
+            "expr": "increase(node_vmstat_oom_kill{job=~\"integrations/(node_exporter|unix)\",cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\"}[$__interval:] offset -$__interval)",
+            "tagKeys": "cluster,job,instance",
+            "textFormat": "",
+            "titleFormat": "OOMkill"
+          }
+        }
+      },
+      {
+        "kind": "AnnotationQuery",
+        "spec": {
+          "query": {
+            "kind": "DataQuery",
+            "group": "prometheus",
+            "version": "v0",
+            "datasource": {
+              "name": "${prometheus_datasource}"
+            },
+            "spec": {}
+          },
+          "enable": true,
+          "hide": true,
+          "iconColor": "light-yellow",
+          "name": "Reboot",
+          "legacyOptions": {
+            "expr": "node_boot_time_seconds{job=~\"integrations/(node_exporter|unix)\",cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\"}*1000 > $__from < $__to",
+            "tagKeys": "cluster,job,instance",
+            "titleFormat": "Reboot",
+            "useValueForTime": "on"
+          }
+        }
+      },
+      {
+        "kind": "AnnotationQuery",
+        "spec": {
+          "query": {
+            "kind": "DataQuery",
+            "group": "loki",
+            "version": "v0",
+            "datasource": {
+              "name": "${loki_datasource}"
+            },
+            "spec": {}
+          },
+          "enable": true,
+          "hide": true,
+          "iconColor": "light-orange",
+          "name": "Service failed",
+          "legacyOptions": {
+            "expr": "{job=~\"integrations/(node_exporter|unix)\",cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\", unit=\"init.scope\"} |= \"code=exited, status=1/FAILURE\"",
+            "tagKeys": "cluster,job,instance,level",
+            "titleFormat": "Service failed"
+          }
+        }
+      },
+      {
+        "kind": "AnnotationQuery",
+        "spec": {
+          "query": {
+            "kind": "DataQuery",
+            "group": "loki",
+            "version": "v0",
+            "datasource": {
+              "name": "${loki_datasource}"
+            },
+            "spec": {}
+          },
+          "enable": true,
+          "hide": true,
+          "iconColor": "",
+          "name": "Session closed",
+          "legacyOptions": {
+            "expr": "{job=~\"integrations/(node_exporter|unix)\",cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\", unit=\"systemd-logind.service\"}|= \"New session\"",
+            "tagKeys": "cluster,job,instance,level",
+            "titleFormat": "Session closed"
+          }
+        }
+      },
+      {
+        "kind": "AnnotationQuery",
+        "spec": {
+          "query": {
+            "kind": "DataQuery",
+            "group": "loki",
+            "version": "v0",
+            "datasource": {
+              "name": "${loki_datasource}"
+            },
+            "spec": {}
+          },
+          "enable": true,
+          "hide": true,
+          "iconColor": "",
+          "name": "Session opened",
+          "legacyOptions": {
+            "expr": "{job=~\"integrations/(node_exporter|unix)\",cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\", unit=\"systemd-logind.service\"}|= \"New session\"",
+            "tagKeys": "cluster,job,instance,level",
+            "titleFormat": "Session opened"
+          }
+        }
+      }
+    ],
+    "cursorSync": "Off",
+    "editable": false,
+    "elements": {
+      "panel-1": {
+        "kind": "Panel",
+        "spec": {
+          "id": 1,
+          "title": "Logs volume",
+          "description": "Logs volume grouped by \"level\" label.",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "loki",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "${loki_datasource}"
+                      },
+                      "spec": {
+                        "expr": "sum by (level) (count_over_time({job=~\"integrations/(node_exporter|unix)\",cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\",transport=~\"$transport\",unit=~\"$unit\",level=~\"$level\"}\n|~ \"$regex_search\"\n\n[$__auto]))\n",
+                        "legendFormat": "{{ level }}"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [
+                {
+                  "kind": "Transformation",
+                  "group": "renameByRegex",
+                  "spec": {
+                    "options": {
+                      "regex": "Value",
+                      "renamePattern": "logs"
+                    }
+                  }
+                }
+              ],
+              "queryOptions": {
+                "maxDataPoints": 100
+              }
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "timeseries",
+            "version": "v11.0.0",
+            "spec": {
+              "options": {
+                "tooltip": {
+                  "mode": "multi",
+                  "sort": "desc"
+                }
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "none",
+                  "custom": {
+                    "drawStyle": "bars",
+                    "fillOpacity": 50,
+                    "stacking": {
+                      "mode": "normal"
+                    }
+                  }
+                },
+                "overrides": [
+                  {
+                    "matcher": {
+                      "id": "byRegexp",
+                      "options": "(E|e)merg|(F|f)atal|(A|a)lert|(C|c)rit.*"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "purple",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byRegexp",
+                      "options": "(E|e)(rr.*|RR.*)"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "red",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byRegexp",
+                      "options": "(W|w)(arn.*|ARN.*|rn|RN)"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "orange",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byRegexp",
+                      "options": "(N|n)(otice|ote)|(I|i)(nf.*|NF.*)"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "green",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byRegexp",
+                      "options": "dbg.*|DBG.*|(D|d)(EBUG|ebug)"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "blue",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byRegexp",
+                      "options": "(T|t)(race|RACE)"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "light-blue",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byRegexp",
+                      "options": "logs"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "text",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "panel-2": {
+        "kind": "Panel",
+        "spec": {
+          "id": 2,
+          "title": "Logs",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "loki",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "${loki_datasource}"
+                      },
+                      "spec": {
+                        "expr": "{job=~\"integrations/(node_exporter|unix)\",cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\",transport=~\"$transport\",unit=~\"$unit\",level=~\"$level\"} \n|~ \"$regex_search\"\n\n| label_format timestamp=\"{{__timestamp__}}\"\n| line_format `{{ if eq \"[[instance]]\" \".*\" }}{{alignLeft 25 .instance}}|{{alignLeft 25 .unit}}|{{else}}{{alignLeft 25 .unit}}|{{end}} {{__line__}}`\n\n"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "logs",
+            "version": "v11.0.0",
+            "spec": {
+              "options": {
+                "dedupStrategy": "exact",
+                "enableLogDetails": true,
+                "prettifyLogMessage": true,
+                "showTime": false,
+                "wrapLogMessage": false
+              },
+              "fieldConfig": {
+                "defaults": {},
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-3": {
+        "kind": "Panel",
+        "spec": {
+          "id": 3,
+          "title": "Logs",
+          "description": "Shows if logs are being received for the selected time range.",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "loki",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "$loki_datasource"
+                      },
+                      "spec": {
+                        "expr": "sum(count_over_time({job=~\"integrations/(node_exporter|unix)\", job=~\"$job\"}[$__auto]))\n"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "stat",
+            "version": "v10.0.0",
+            "spec": {
+              "options": {
+                "colorMode": "background",
+                "graphMode": "none",
+                "reduceOptions": {
+                  "calcs": [
+                    "lastNotNull"
+                  ]
+                }
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "string",
+                  "mappings": [
+                    {
+                      "type": "special",
+                      "options": {
+                        "match": "null",
+                        "result": {
+                          "text": "Failed to collect logs or no logs available",
+                          "color": "light-yellow",
+                          "index": 0
+                        }
+                      }
+                    },
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 0,
+                        "to": 0,
+                        "result": {
+                          "text": "Failed to collect logs or no logs available",
+                          "color": "light-yellow",
+                          "index": 1
+                        }
+                      }
+                    },
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 1,
+                        "to": 1000000,
+                        "result": {
+                          "text": "Receiving logs",
+                          "color": "light-green",
+                          "index": 2
+                        }
+                      }
+                    }
+                  ],
+                  "color": {
+                    "mode": "fixed",
+                    "fixedColor": "text"
+                  },
+                  "noValue": "No data"
+                },
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-4": {
+        "kind": "Panel",
+        "spec": {
+          "id": 4,
+          "title": "Latest logs received",
+          "description": "Shows the timestamp of the latest logs received for this integration in the last 24 hours.",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "loki",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "$loki_datasource"
+                      },
+                      "spec": {
+                        "expr": "sum(count_over_time({job=~\"integrations/(node_exporter|unix)\", job=~\"$job\"}[$__auto]))\n"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {
+                "timeFrom": "now-24h"
+              }
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "stat",
+            "version": "v10.0.0",
+            "spec": {
+              "options": {
+                "colorMode": "background",
+                "graphMode": "none",
+                "reduceOptions": {
+                  "calcs": [
+                    "lastNotNull"
+                  ],
+                  "fields": "Time"
+                }
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "dateTimeFromNow",
+                  "color": {
+                    "mode": "fixed",
+                    "fixedColor": "text"
+                  },
+                  "noValue": "No data"
+                },
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-5": {
+        "kind": "Panel",
+        "spec": {
+          "id": 5,
+          "title": "Integration version",
+          "description": "Shows the installed version of this integration.",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "text",
+            "version": "v10.0.0",
+            "spec": {
+              "options": {
+                "content": "<p style=\"text-align: center\">1.6.2</p>",
+                "mode": "html"
+              },
+              "fieldConfig": {
+                "defaults": {},
+                "overrides": []
+              }
+            }
+          }
+        }
+      }
+    },
+    "layout": {
+      "kind": "GridLayout",
+      "spec": {
+        "items": [
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "x": 0,
+              "y": 0,
+              "width": 8,
+              "height": 2,
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-3"
+              }
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "x": 8,
+              "y": 0,
+              "width": 8,
+              "height": 2,
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-4"
+              }
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "x": 16,
+              "y": 0,
+              "width": 8,
+              "height": 2,
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-5"
+              }
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "x": 0,
+              "y": 3,
+              "width": 24,
+              "height": 6,
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-1"
+              }
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "x": 0,
+              "y": 21,
+              "width": 24,
+              "height": 18,
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-2"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "links": [
+      {
+        "title": "Back to Linux node / fleet",
+        "type": "link",
+        "icon": "",
+        "tooltip": "",
+        "url": "/d/node-fleet",
+        "tags": [],
+        "asDropdown": false,
+        "targetBlank": false,
+        "includeVars": false,
+        "keepTime": true
+      },
+      {
+        "title": "Back to Linux node / overview",
+        "type": "link",
+        "icon": "",
+        "tooltip": "",
+        "url": "/d/nodes",
+        "tags": [],
+        "asDropdown": false,
+        "targetBlank": false,
+        "includeVars": false,
+        "keepTime": true
+      },
+      {
+        "title": "All Linux node /  dashboards",
+        "type": "dashboards",
+        "icon": "",
+        "tooltip": "",
+        "tags": [
+          "linux-node-integration"
+        ],
+        "asDropdown": true,
+        "targetBlank": false,
+        "includeVars": true,
+        "keepTime": true
+      }
+    ],
+    "liveNow": false,
+    "preload": false,
+    "tags": [
+      "linux-node-integration"
+    ],
+    "timeSettings": {
+      "timezone": "default",
+      "from": "now-30m",
+      "to": "now",
+      "autoRefresh": "30s",
+      "autoRefreshIntervals": [
+        "5s",
+        "10s",
+        "30s",
+        "1m",
+        "5m",
+        "15m",
+        "30m",
+        "1h",
+        "2h",
+        "1d"
+      ],
+      "hideTimepicker": false,
+      "fiscalYearStartMonth": 0
+    },
+    "title": "Linux node / logs",
+    "variables": [
+      {
+        "kind": "DatasourceVariable",
+        "spec": {
+          "name": "loki_datasource",
+          "pluginId": "loki",
+          "refresh": "never",
+          "regex": "(?!grafanacloud.+usage-insights|grafanacloud.+alert-state-history).+",
+          "current": {
+            "text": "",
+            "value": ""
+          },
+          "options": [],
+          "multi": false,
+          "includeAll": false,
+          "label": "Loki data source",
+          "hide": "dontHide",
+          "skipUrlSync": false,
+          "allowCustomValue": true
+        }
+      },
+      {
+        "kind": "QueryVariable",
+        "spec": {
+          "name": "cluster",
+          "current": {
+            "text": "",
+            "value": ""
+          },
+          "label": "Cluster",
+          "hide": "dontHide",
+          "refresh": "onTimeRangeChanged",
+          "skipUrlSync": false,
+          "query": {
+            "kind": "DataQuery",
+            "group": "loki",
+            "version": "v0",
+            "datasource": {
+              "name": "${loki_datasource}"
+            },
+            "spec": {
+              "__legacyStringValue": "label_values({job=~\"integrations/(node_exporter|unix)\"}, cluster)"
+            }
+          },
+          "regex": "",
+          "sort": "alphabeticalAsc",
+          "options": [],
+          "multi": true,
+          "includeAll": true,
+          "allValue": ".*",
+          "allowCustomValue": true
+        }
+      },
+      {
+        "kind": "QueryVariable",
+        "spec": {
+          "name": "job",
+          "current": {
+            "text": "",
+            "value": ""
+          },
+          "label": "Job",
+          "hide": "dontHide",
+          "refresh": "onTimeRangeChanged",
+          "skipUrlSync": false,
+          "query": {
+            "kind": "DataQuery",
+            "group": "loki",
+            "version": "v0",
+            "datasource": {
+              "name": "${loki_datasource}"
+            },
+            "spec": {
+              "__legacyStringValue": "label_values({job=~\"integrations/(node_exporter|unix)\",cluster=~\"$cluster\"}, job)"
+            }
+          },
+          "regex": "",
+          "sort": "alphabeticalAsc",
+          "options": [],
+          "multi": true,
+          "includeAll": true,
+          "allValue": ".*",
+          "allowCustomValue": true
+        }
+      },
+      {
+        "kind": "QueryVariable",
+        "spec": {
+          "name": "instance",
+          "current": {
+            "text": "",
+            "value": ""
+          },
+          "label": "Instance",
+          "hide": "dontHide",
+          "refresh": "onTimeRangeChanged",
+          "skipUrlSync": false,
+          "query": {
+            "kind": "DataQuery",
+            "group": "loki",
+            "version": "v0",
+            "datasource": {
+              "name": "${loki_datasource}"
+            },
+            "spec": {
+              "__legacyStringValue": "label_values({job=~\"integrations/(node_exporter|unix)\",cluster=~\"$cluster\",job=~\"$job\"}, instance)"
+            }
+          },
+          "regex": "",
+          "sort": "alphabeticalAsc",
+          "options": [],
+          "multi": true,
+          "includeAll": true,
+          "allValue": ".*",
+          "allowCustomValue": true
+        }
+      },
+      {
+        "kind": "QueryVariable",
+        "spec": {
+          "name": "transport",
+          "current": {
+            "text": "",
+            "value": ""
+          },
+          "label": "Transport",
+          "hide": "dontHide",
+          "refresh": "onTimeRangeChanged",
+          "skipUrlSync": false,
+          "query": {
+            "kind": "DataQuery",
+            "group": "loki",
+            "version": "v0",
+            "datasource": {
+              "name": "${loki_datasource}"
+            },
+            "spec": {
+              "__legacyStringValue": "label_values({job=~\"integrations/(node_exporter|unix)\",cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\"}, transport)"
+            }
+          },
+          "regex": "",
+          "sort": "alphabeticalAsc",
+          "options": [],
+          "multi": true,
+          "includeAll": true,
+          "allValue": ".*",
+          "allowCustomValue": true
+        }
+      },
+      {
+        "kind": "QueryVariable",
+        "spec": {
+          "name": "unit",
+          "current": {
+            "text": "",
+            "value": ""
+          },
+          "label": "Unit",
+          "hide": "dontHide",
+          "refresh": "onTimeRangeChanged",
+          "skipUrlSync": false,
+          "query": {
+            "kind": "DataQuery",
+            "group": "loki",
+            "version": "v0",
+            "datasource": {
+              "name": "${loki_datasource}"
+            },
+            "spec": {
+              "__legacyStringValue": "label_values({job=~\"integrations/(node_exporter|unix)\",cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\",transport=~\"$transport\"}, unit)"
+            }
+          },
+          "regex": "",
+          "sort": "alphabeticalAsc",
+          "options": [],
+          "multi": true,
+          "includeAll": true,
+          "allValue": ".*",
+          "allowCustomValue": true
+        }
+      },
+      {
+        "kind": "QueryVariable",
+        "spec": {
+          "name": "level",
+          "current": {
+            "text": "",
+            "value": ""
+          },
+          "label": "Level",
+          "hide": "dontHide",
+          "refresh": "onTimeRangeChanged",
+          "skipUrlSync": false,
+          "query": {
+            "kind": "DataQuery",
+            "group": "loki",
+            "version": "v0",
+            "datasource": {
+              "name": "${loki_datasource}"
+            },
+            "spec": {
+              "__legacyStringValue": "label_values({job=~\"integrations/(node_exporter|unix)\",cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\",transport=~\"$transport\",unit=~\"$unit\"}, level)"
+            }
+          },
+          "regex": "",
+          "sort": "alphabeticalAsc",
+          "options": [],
+          "multi": true,
+          "includeAll": true,
+          "allValue": ".*",
+          "allowCustomValue": true
+        }
+      },
+      {
+        "kind": "TextVariable",
+        "spec": {
+          "name": "regex_search",
+          "current": {
+            "text": "",
+            "value": ""
+          },
+          "query": "",
+          "label": "Regex search",
+          "hide": "dontHide",
+          "skipUrlSync": false
+        }
+      },
+      {
+        "kind": "DatasourceVariable",
+        "spec": {
+          "name": "prometheus_datasource",
+          "pluginId": "prometheus",
+          "refresh": "never",
+          "regex": "(?!grafanacloud-usage|grafanacloud-ml-metrics).+",
+          "current": {
+            "text": "",
+            "value": ""
+          },
+          "options": [],
+          "multi": false,
+          "includeAll": false,
+          "label": "Prometheus data source",
+          "hide": "hideVariable",
+          "skipUrlSync": false,
+          "allowCustomValue": true
+        }
+      }
+    ]
+  }
+}

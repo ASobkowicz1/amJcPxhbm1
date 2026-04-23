@@ -1,0 +1,2291 @@
+{
+  "apiVersion": "dashboard.grafana.app/v2",
+  "kind": "Dashboard",
+  "metadata": {
+    "name": "node-fleet",
+    "generation": 1,
+    "creationTimestamp": "2026-04-16T13:53:24Z",
+    "labels": {},
+    "annotations": {}
+  },
+  "spec": {
+    "annotations": [
+      {
+        "kind": "AnnotationQuery",
+        "spec": {
+          "query": {
+            "kind": "DataQuery",
+            "group": "grafana",
+            "version": "v0",
+            "spec": {},
+            "labels": {
+              "grafana.app/export-label": "grafana-1"
+            }
+          },
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "builtIn": true,
+          "legacyOptions": {
+            "type": "dashboard"
+          }
+        }
+      },
+      {
+        "kind": "AnnotationQuery",
+        "spec": {
+          "query": {
+            "kind": "DataQuery",
+            "group": "loki",
+            "version": "v0",
+            "datasource": {
+              "name": "${loki_datasource}"
+            },
+            "spec": {}
+          },
+          "enable": true,
+          "hide": true,
+          "iconColor": "light-purple",
+          "name": "Critical system event",
+          "legacyOptions": {
+            "expr": "{job=~\"integrations/(node_exporter|unix)\",cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\", transport=\"kernel\", level=\"emerg\"}",
+            "tagKeys": "cluster,job,instance,level",
+            "titleFormat": "Critical system event"
+          }
+        }
+      },
+      {
+        "kind": "AnnotationQuery",
+        "spec": {
+          "query": {
+            "kind": "DataQuery",
+            "group": "prometheus",
+            "version": "v0",
+            "datasource": {
+              "name": "${prometheus_datasource}"
+            },
+            "spec": {}
+          },
+          "enable": true,
+          "hide": true,
+          "iconColor": "light-blue",
+          "name": "Kernel update",
+          "legacyOptions": {
+            "expr": "changes(\nsum by (instance) (\n    group by (instance,release) (node_uname_info{job=~\"integrations/(node_exporter|unix)\",cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\"})\n    )\n[$__interval:1m] offset -$__interval) > 1\n",
+            "step": "5m",
+            "tagKeys": "cluster,job,instance",
+            "textFormat": "",
+            "titleFormat": "Kernel update"
+          }
+        }
+      },
+      {
+        "kind": "AnnotationQuery",
+        "spec": {
+          "query": {
+            "kind": "DataQuery",
+            "group": "prometheus",
+            "version": "v0",
+            "datasource": {
+              "name": "${prometheus_datasource}"
+            },
+            "spec": {}
+          },
+          "enable": true,
+          "hide": true,
+          "iconColor": "light-purple",
+          "name": "OOMkill",
+          "legacyOptions": {
+            "expr": "increase(node_vmstat_oom_kill{job=~\"integrations/(node_exporter|unix)\",cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\"}[$__interval:] offset -$__interval)",
+            "tagKeys": "cluster,job,instance",
+            "textFormat": "",
+            "titleFormat": "OOMkill"
+          }
+        }
+      },
+      {
+        "kind": "AnnotationQuery",
+        "spec": {
+          "query": {
+            "kind": "DataQuery",
+            "group": "prometheus",
+            "version": "v0",
+            "datasource": {
+              "name": "${prometheus_datasource}"
+            },
+            "spec": {}
+          },
+          "enable": true,
+          "hide": true,
+          "iconColor": "light-yellow",
+          "name": "Reboot",
+          "legacyOptions": {
+            "expr": "node_boot_time_seconds{job=~\"integrations/(node_exporter|unix)\",cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\"}*1000 > $__from < $__to",
+            "tagKeys": "cluster,job,instance",
+            "titleFormat": "Reboot",
+            "useValueForTime": "on"
+          }
+        }
+      },
+      {
+        "kind": "AnnotationQuery",
+        "spec": {
+          "query": {
+            "kind": "DataQuery",
+            "group": "loki",
+            "version": "v0",
+            "datasource": {
+              "name": "${loki_datasource}"
+            },
+            "spec": {}
+          },
+          "enable": true,
+          "hide": true,
+          "iconColor": "light-orange",
+          "name": "Service failed",
+          "legacyOptions": {
+            "expr": "{job=~\"integrations/(node_exporter|unix)\",cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\", unit=\"init.scope\"} |= \"code=exited, status=1/FAILURE\"",
+            "tagKeys": "cluster,job,instance,level",
+            "titleFormat": "Service failed"
+          }
+        }
+      },
+      {
+        "kind": "AnnotationQuery",
+        "spec": {
+          "query": {
+            "kind": "DataQuery",
+            "group": "loki",
+            "version": "v0",
+            "datasource": {
+              "name": "${loki_datasource}"
+            },
+            "spec": {}
+          },
+          "enable": true,
+          "hide": true,
+          "iconColor": "",
+          "name": "Session closed",
+          "legacyOptions": {
+            "expr": "{job=~\"integrations/(node_exporter|unix)\",cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\", unit=\"systemd-logind.service\"}|= \"New session\"",
+            "tagKeys": "cluster,job,instance,level",
+            "titleFormat": "Session closed"
+          }
+        }
+      },
+      {
+        "kind": "AnnotationQuery",
+        "spec": {
+          "query": {
+            "kind": "DataQuery",
+            "group": "loki",
+            "version": "v0",
+            "datasource": {
+              "name": "${loki_datasource}"
+            },
+            "spec": {}
+          },
+          "enable": true,
+          "hide": true,
+          "iconColor": "",
+          "name": "Session opened",
+          "legacyOptions": {
+            "expr": "{job=~\"integrations/(node_exporter|unix)\",cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\", unit=\"systemd-logind.service\"}|= \"New session\"",
+            "tagKeys": "cluster,job,instance,level",
+            "titleFormat": "Session opened"
+          }
+        }
+      }
+    ],
+    "cursorSync": "Off",
+    "editable": false,
+    "elements": {
+      "panel-1": {
+        "kind": "Panel",
+        "spec": {
+          "id": 1,
+          "title": "Fleet overview",
+          "description": "All nodes' perfomance at a glance.",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "${prometheus_datasource}"
+                      },
+                      "spec": {
+                        "expr": "node_uname_info{job=~\"integrations/(node_exporter|unix)\",cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\"} \n* on (cluster,job,instance)\ngroup_left(pretty_name)\nnode_os_info{job=~\"integrations/(node_exporter|unix)\",cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\"}\n",
+                        "format": "table",
+                        "instant": true
+                      }
+                    },
+                    "refId": "OS Info",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "${prometheus_datasource}"
+                      },
+                      "spec": {
+                        "expr": "time() - node_boot_time_seconds{job=~\"integrations/(node_exporter|unix)\",cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\"}",
+                        "format": "table",
+                        "instant": true
+                      }
+                    },
+                    "refId": "Uptime",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "${prometheus_datasource}"
+                      },
+                      "spec": {
+                        "expr": "node_load1{job=~\"integrations/(node_exporter|unix)\",cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\"}",
+                        "format": "table",
+                        "instant": true,
+                        "legendFormat": "1m"
+                      }
+                    },
+                    "refId": "Load 1",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "${prometheus_datasource}"
+                      },
+                      "spec": {
+                        "expr": "count without (cpu) (node_cpu_seconds_total{job=~\"integrations/(node_exporter|unix)\",cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\", mode=\"idle\"})",
+                        "format": "table",
+                        "instant": true,
+                        "legendFormat": "Cores"
+                      }
+                    },
+                    "refId": "Cores",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "${prometheus_datasource}"
+                      },
+                      "spec": {
+                        "expr": "(((count by (instance) (count(node_cpu_seconds_total{job=~\"integrations/(node_exporter|unix)\",cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\"}) by (cpu, instance))) \n- \nsum by (instance) (sum by (instance, mode)(irate(node_cpu_seconds_total{mode=~'idle|iowait|steal',job=~\"integrations/(node_exporter|unix)\",cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\"}[$__rate_interval])))) * 100) \n/ \ncount by(instance) (count(node_cpu_seconds_total{job=~\"integrations/(node_exporter|unix)\",cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\"}) by (cpu, instance))\n",
+                        "format": "table",
+                        "instant": true,
+                        "legendFormat": "CPU usage"
+                      }
+                    },
+                    "refId": "CPU usage",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "${prometheus_datasource}"
+                      },
+                      "spec": {
+                        "expr": "node_memory_MemTotal_bytes{job=~\"integrations/(node_exporter|unix)\",cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\"}",
+                        "format": "table",
+                        "instant": true,
+                        "legendFormat": "Memory total"
+                      }
+                    },
+                    "refId": "Memory total",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "${prometheus_datasource}"
+                      },
+                      "spec": {
+                        "expr": "100 -\n(\n  avg by (instance) (node_memory_MemAvailable_bytes{job=~\"integrations/(node_exporter|unix)\",cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\"}) /\n  avg by (instance) (node_memory_MemTotal_bytes{job=~\"integrations/(node_exporter|unix)\",cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\"})\n* 100\n)\n",
+                        "format": "table",
+                        "instant": true
+                      }
+                    },
+                    "refId": "Memory usage",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "${prometheus_datasource}"
+                      },
+                      "spec": {
+                        "expr": "node_filesystem_size_bytes{job=~\"integrations/(node_exporter|unix)\",cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\", mountpoint=\"/\", fstype!=\"rootfs\"}",
+                        "format": "table",
+                        "instant": true
+                      }
+                    },
+                    "refId": "Root mount size",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "${prometheus_datasource}"
+                      },
+                      "spec": {
+                        "expr": "100 - node_filesystem_avail_bytes{mountpoint=\"/\",fstype!=\"rootfs\", job=~\"integrations/(node_exporter|unix)\",cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\"}/node_filesystem_size_bytes{mountpoint=\"/\",fstype!=\"rootfs\", job=~\"integrations/(node_exporter|unix)\",cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\"}*100",
+                        "format": "table",
+                        "instant": true
+                      }
+                    },
+                    "refId": "Root mount used",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "${prometheus_datasource}"
+                      },
+                      "spec": {
+                        "expr": "count by (instance) (max_over_time(ALERTS{job=~\"integrations/(node_exporter|unix)\",cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\", alertstate=\"firing\", severity=\"critical\"}[1m])) * group by (instance) (node_uname_info{job=~\"integrations/(node_exporter|unix)\",cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\"})",
+                        "format": "table",
+                        "instant": true
+                      }
+                    },
+                    "refId": "CRITICAL",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "${prometheus_datasource}"
+                      },
+                      "spec": {
+                        "expr": "count by (instance) (max_over_time(ALERTS{job=~\"integrations/(node_exporter|unix)\",cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\", alertstate=\"firing\", severity=\"warning\"}[1m])) * group by (instance) (node_uname_info{job=~\"integrations/(node_exporter|unix)\",cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\"})",
+                        "format": "table",
+                        "instant": true
+                      }
+                    },
+                    "refId": "WARNING",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [
+                {
+                  "kind": "Transformation",
+                  "group": "joinByField",
+                  "spec": {
+                    "options": {
+                      "byField": "instance",
+                      "mode": "outer"
+                    }
+                  }
+                },
+                {
+                  "kind": "Transformation",
+                  "group": "filterFieldsByName",
+                  "spec": {
+                    "options": {
+                      "include": {
+                        "pattern": "instance|instance 1|cluster 1|job 1|product|^hostname$|^nodename$|^pretty_name$|Value.+"
+                      }
+                    }
+                  }
+                },
+                {
+                  "kind": "Transformation",
+                  "group": "organize",
+                  "spec": {
+                    "options": {
+                      "excludeByName": {
+                        "Value #OS Info": true
+                      },
+                      "indexByName": {
+                        "cluster": 3,
+                        "hostname": 1,
+                        "instance": 0,
+                        "job": 3,
+                        "nodename": 1,
+                        "pretty_name": 2,
+                        "product": 2
+                      },
+                      "renameByName": {
+                        "cluster 1": "Cluster",
+                        "hostname": "Hostname",
+                        "instance": "Instance",
+                        "instance 1": "Instance",
+                        "job 1": "Job",
+                        "nodename": "Hostname",
+                        "pretty_name": "OS",
+                        "product": "OS"
+                      }
+                    }
+                  }
+                },
+                {
+                  "kind": "Transformation",
+                  "group": "renameByRegex",
+                  "spec": {
+                    "options": {
+                      "regex": "Value #(.*)",
+                      "renamePattern": "$1"
+                    }
+                  }
+                }
+              ],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "table",
+            "version": "v11.0.0",
+            "spec": {
+              "options": {
+                "footer": {
+                  "fields": [
+                    "Value #Cores",
+                    "Value #Load 1",
+                    "Value #Memory total",
+                    "Value #Root mount size"
+                  ],
+                  "reducer": [
+                    "sum"
+                  ],
+                  "show": true
+                }
+              },
+              "fieldConfig": {
+                "defaults": {},
+                "overrides": [
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Uptime"
+                    },
+                    "properties": [
+                      {
+                        "id": "custom.cellOptions",
+                        "value": {
+                          "type": "color-text"
+                        }
+                      },
+                      {
+                        "id": "color",
+                        "value": {
+                          "mode": "thresholds"
+                        }
+                      },
+                      {
+                        "id": "decimals",
+                        "value": 1
+                      },
+                      {
+                        "id": "thresholds",
+                        "value": {
+                          "mode": "absolute",
+                          "steps": [
+                            {
+                              "color": "orange"
+                            },
+                            {
+                              "color": "text",
+                              "value": 600
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "id": "unit",
+                        "value": "dtdurations"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byRegexp",
+                      "options": "Product|^Hostname$"
+                    },
+                    "properties": [
+                      {
+                        "id": "custom.filterable",
+                        "value": true
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Instance"
+                    },
+                    "properties": [
+                      {
+                        "id": "custom.filterable",
+                        "value": true
+                      },
+                      {
+                        "id": "links",
+                        "value": [
+                          {
+                            "targetBlank": false,
+                            "title": "Drill down to ${__field.name} ${__value.text}",
+                            "url": "d/nodes?${__url_time_range}&${datasource:queryparam}&var-instance=${__data.fields.instance}"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byRegexp",
+                      "options": "Cluster|Job"
+                    },
+                    "properties": [
+                      {
+                        "id": "custom.filterable",
+                        "value": true
+                      },
+                      {
+                        "id": "links",
+                        "value": [
+                          {
+                            "targetBlank": false,
+                            "title": "Filter by ${__field.name}",
+                            "url": "d/node-fleet?var-${__field.name}=${__value.text}&${__url_time_range}&${datasource:queryparam}"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Cores"
+                    },
+                    "properties": [
+                      {
+                        "id": "custom.width",
+                        "value": 120
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "CPU usage"
+                    },
+                    "properties": [
+                      {
+                        "id": "custom.width",
+                        "value": 120
+                      },
+                      {
+                        "id": "custom.cellOptions",
+                        "value": {
+                          "mode": "basic",
+                          "type": "gauge",
+                          "valueDisplayMode": "text"
+                        }
+                      },
+                      {
+                        "id": "color",
+                        "value": {
+                          "mode": "continuous-BlYlRd"
+                        }
+                      },
+                      {
+                        "id": "custom.fillOpacity",
+                        "value": 30
+                      },
+                      {
+                        "id": "custom.gradientMode",
+                        "value": "scheme"
+                      },
+                      {
+                        "id": "custom.lineInterpolation",
+                        "value": "smooth"
+                      },
+                      {
+                        "id": "custom.lineWidth",
+                        "value": 2
+                      },
+                      {
+                        "id": "custom.showPoints",
+                        "value": "never"
+                      },
+                      {
+                        "id": "decimals",
+                        "value": 1
+                      },
+                      {
+                        "id": "max",
+                        "value": 100
+                      },
+                      {
+                        "id": "min",
+                        "value": 0
+                      },
+                      {
+                        "id": "unit",
+                        "value": "percent"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Memory total"
+                    },
+                    "properties": [
+                      {
+                        "id": "custom.width",
+                        "value": 120
+                      },
+                      {
+                        "id": "unit",
+                        "value": "bytes"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Memory usage"
+                    },
+                    "properties": [
+                      {
+                        "id": "custom.width",
+                        "value": 120
+                      },
+                      {
+                        "id": "custom.cellOptions",
+                        "value": {
+                          "mode": "basic",
+                          "type": "gauge",
+                          "valueDisplayMode": "text"
+                        }
+                      },
+                      {
+                        "id": "color",
+                        "value": {
+                          "mode": "continuous-BlYlRd"
+                        }
+                      },
+                      {
+                        "id": "custom.fillOpacity",
+                        "value": 30
+                      },
+                      {
+                        "id": "custom.gradientMode",
+                        "value": "scheme"
+                      },
+                      {
+                        "id": "custom.lineInterpolation",
+                        "value": "smooth"
+                      },
+                      {
+                        "id": "custom.lineWidth",
+                        "value": 2
+                      },
+                      {
+                        "id": "custom.showPoints",
+                        "value": "never"
+                      },
+                      {
+                        "id": "decimals",
+                        "value": 1
+                      },
+                      {
+                        "id": "max",
+                        "value": 100
+                      },
+                      {
+                        "id": "min",
+                        "value": 0
+                      },
+                      {
+                        "id": "unit",
+                        "value": "percent"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Root mount size"
+                    },
+                    "properties": [
+                      {
+                        "id": "custom.width",
+                        "value": 120
+                      },
+                      {
+                        "id": "unit",
+                        "value": "bytes"
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Root mount used"
+                    },
+                    "properties": [
+                      {
+                        "id": "custom.width",
+                        "value": 120
+                      },
+                      {
+                        "id": "custom.cellOptions",
+                        "value": {
+                          "mode": "basic",
+                          "type": "gauge",
+                          "valueDisplayMode": "text"
+                        }
+                      },
+                      {
+                        "id": "unit",
+                        "value": "percent"
+                      },
+                      {
+                        "id": "color",
+                        "value": {
+                          "mode": "continuous-BlYlRd"
+                        }
+                      },
+                      {
+                        "id": "custom.fillOpacity",
+                        "value": 30
+                      },
+                      {
+                        "id": "custom.gradientMode",
+                        "value": "scheme"
+                      },
+                      {
+                        "id": "custom.lineInterpolation",
+                        "value": "smooth"
+                      },
+                      {
+                        "id": "custom.lineWidth",
+                        "value": 2
+                      },
+                      {
+                        "id": "custom.showPoints",
+                        "value": "never"
+                      },
+                      {
+                        "id": "decimals",
+                        "value": 1
+                      },
+                      {
+                        "id": "max",
+                        "value": 100
+                      },
+                      {
+                        "id": "min",
+                        "value": 0
+                      },
+                      {
+                        "id": "unit",
+                        "value": "percent"
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "panel-10": {
+        "kind": "Panel",
+        "spec": {
+          "id": 10,
+          "title": "Latest metrics received",
+          "description": "Shows the timestamp of the latest metrics received for this integration in the last 24 hours.",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "$prometheus_datasource"
+                      },
+                      "spec": {
+                        "expr": "vector(1) and on() ((count(up{job=~\"$job\"} == 1) > 0) and (absent(absent(node_uname_info{job=~\"$job\"})))) or vector(0) and on() ((count(up{job=~\"$job\"}) > 0) and (absent(node_uname_info{job=~\"$job\"})))\n"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {
+                "timeFrom": "now-24h"
+              }
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "stat",
+            "version": "v10.0.0",
+            "spec": {
+              "options": {
+                "colorMode": "background",
+                "graphMode": "none",
+                "reduceOptions": {
+                  "calcs": [
+                    "lastNotNull"
+                  ],
+                  "fields": "Time"
+                }
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "dateTimeFromNow",
+                  "color": {
+                    "mode": "fixed",
+                    "fixedColor": "text"
+                  },
+                  "noValue": "No data"
+                },
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-11": {
+        "kind": "Panel",
+        "spec": {
+          "id": 11,
+          "title": "Integration version",
+          "description": "Shows the installed version of this integration.",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "text",
+            "version": "v10.0.0",
+            "spec": {
+              "options": {
+                "content": "<p style=\"text-align: center\">1.6.2</p>",
+                "mode": "html"
+              },
+              "fieldConfig": {
+                "defaults": {},
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-2": {
+        "kind": "Panel",
+        "spec": {
+          "id": 2,
+          "title": "CPU usage",
+          "description": "Top 25",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "${prometheus_datasource}"
+                      },
+                      "spec": {
+                        "expr": "topk(25,(((count by (instance) (count(node_cpu_seconds_total{job=~\"integrations/(node_exporter|unix)\",cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\"}) by (cpu, instance))) \n- \nsum by (instance) (sum by (instance, mode)(irate(node_cpu_seconds_total{mode=~'idle|iowait|steal',job=~\"integrations/(node_exporter|unix)\",cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\"}[$__rate_interval])))) * 100) \n/ \ncount by(instance) (count(node_cpu_seconds_total{job=~\"integrations/(node_exporter|unix)\",cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\"}) by (cpu, instance))\n)",
+                        "legendFormat": "{{instance}}"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "${prometheus_datasource}"
+                      },
+                      "spec": {
+                        "expr": "avg((((count by (instance) (count(node_cpu_seconds_total{job=~\"integrations/(node_exporter|unix)\",cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\"}) by (cpu, instance))) \n- \nsum by (instance) (sum by (instance, mode)(irate(node_cpu_seconds_total{mode=~'idle|iowait|steal',job=~\"integrations/(node_exporter|unix)\",cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\"}[$__rate_interval])))) * 100) \n/ \ncount by(instance) (count(node_cpu_seconds_total{job=~\"integrations/(node_exporter|unix)\",cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\"}) by (cpu, instance))\n)",
+                        "legendFormat": "Mean"
+                      }
+                    },
+                    "refId": "B",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "timeseries",
+            "version": "v11.0.0",
+            "spec": {
+              "options": {
+                "legend": {
+                  "calcs": [
+                    "mean",
+                    "max",
+                    "lastNotNull"
+                  ],
+                  "displayMode": "table",
+                  "placement": "right"
+                },
+                "tooltip": {
+                  "mode": "multi",
+                  "sort": "desc"
+                }
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "percent",
+                  "decimals": 1,
+                  "min": 0,
+                  "max": 100,
+                  "color": {
+                    "mode": "continuous-BlYlRd"
+                  },
+                  "links": [
+                    {
+                      "title": "Drill down to this instance",
+                      "url": "/d/nodes?var-instance=${__field.labels.instance}&${__url_time_range}&${datasource:queryparam}"
+                    }
+                  ],
+                  "custom": {
+                    "fillOpacity": 1,
+                    "gradientMode": "scheme",
+                    "lineInterpolation": "smooth",
+                    "lineWidth": 1,
+                    "showPoints": "never"
+                  }
+                },
+                "overrides": [
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Mean"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "light-purple",
+                          "mode": "fixed"
+                        }
+                      },
+                      {
+                        "id": "custom.fillOpacity",
+                        "value": 0
+                      },
+                      {
+                        "id": "custom.lineStyle",
+                        "value": {
+                          "dash": [
+                            10,
+                            10
+                          ],
+                          "fill": "dash"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "panel-3": {
+        "kind": "Panel",
+        "spec": {
+          "id": 3,
+          "title": "Load average 1m",
+          "description": "Top 25",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "${prometheus_datasource}"
+                      },
+                      "spec": {
+                        "expr": "topk(25, node_load1{job=~\"integrations/(node_exporter|unix)\",cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\"})>0",
+                        "legendFormat": "{{instance}}"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "${prometheus_datasource}"
+                      },
+                      "spec": {
+                        "expr": "count without (cpu) (node_cpu_seconds_total{job=~\"integrations/(node_exporter|unix)\",cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\", mode=\"idle\"})",
+                        "legendFormat": "Cores"
+                      }
+                    },
+                    "refId": "B",
+                    "hidden": true
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "timeseries",
+            "version": "v11.0.0",
+            "spec": {
+              "options": {
+                "legend": {
+                  "calcs": [
+                    "mean",
+                    "max",
+                    "lastNotNull"
+                  ],
+                  "displayMode": "table",
+                  "placement": "right"
+                },
+                "tooltip": {
+                  "mode": "multi",
+                  "sort": "desc"
+                }
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "short",
+                  "min": 0,
+                  "custom": {
+                    "fillOpacity": 0,
+                    "gradientMode": "opacity",
+                    "lineInterpolation": "smooth",
+                    "lineWidth": 2,
+                    "showPoints": "never"
+                  }
+                },
+                "overrides": [
+                  {
+                    "matcher": {
+                      "id": "byRegexp",
+                      "options": "Cores"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "light-orange",
+                          "mode": "fixed"
+                        }
+                      },
+                      {
+                        "id": "custom.fillOpacity",
+                        "value": 0
+                      },
+                      {
+                        "id": "custom.lineStyle",
+                        "value": {
+                          "dash": [
+                            10,
+                            10
+                          ],
+                          "fill": "dash"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "panel-4": {
+        "kind": "Panel",
+        "spec": {
+          "id": 4,
+          "title": "Memory usage",
+          "description": "Top 25",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "${prometheus_datasource}"
+                      },
+                      "spec": {
+                        "expr": "topk(25,100 -\n(\n  avg by (instance) (node_memory_MemAvailable_bytes{job=~\"integrations/(node_exporter|unix)\",cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\"}) /\n  avg by (instance) (node_memory_MemTotal_bytes{job=~\"integrations/(node_exporter|unix)\",cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\"})\n* 100\n)\n)",
+                        "legendFormat": "{{instance}}"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "${prometheus_datasource}"
+                      },
+                      "spec": {
+                        "expr": "avg(100 -\n(\n  avg by (instance) (node_memory_MemAvailable_bytes{job=~\"integrations/(node_exporter|unix)\",cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\"}) /\n  avg by (instance) (node_memory_MemTotal_bytes{job=~\"integrations/(node_exporter|unix)\",cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\"})\n* 100\n)\n)",
+                        "legendFormat": "Mean"
+                      }
+                    },
+                    "refId": "B",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "timeseries",
+            "version": "v11.0.0",
+            "spec": {
+              "options": {
+                "legend": {
+                  "calcs": [
+                    "mean",
+                    "max",
+                    "lastNotNull"
+                  ],
+                  "displayMode": "table",
+                  "placement": "right"
+                },
+                "tooltip": {
+                  "mode": "multi",
+                  "sort": "desc"
+                }
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "percent",
+                  "decimals": 1,
+                  "min": 0,
+                  "max": 100,
+                  "color": {
+                    "mode": "continuous-BlYlRd"
+                  },
+                  "links": [
+                    {
+                      "title": "Drill down to this instance",
+                      "url": "/d/nodes?var-instance=${__field.labels.instance}&${__url_time_range}&${datasource:queryparam}"
+                    }
+                  ],
+                  "custom": {
+                    "fillOpacity": 1,
+                    "gradientMode": "scheme",
+                    "lineInterpolation": "smooth",
+                    "lineWidth": 1,
+                    "showPoints": "never"
+                  }
+                },
+                "overrides": [
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Mean"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "light-purple",
+                          "mode": "fixed"
+                        }
+                      },
+                      {
+                        "id": "custom.fillOpacity",
+                        "value": 0
+                      },
+                      {
+                        "id": "custom.lineStyle",
+                        "value": {
+                          "dash": [
+                            10,
+                            10
+                          ],
+                          "fill": "dash"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "panel-5": {
+        "kind": "Panel",
+        "spec": {
+          "id": 5,
+          "title": "Disk IO",
+          "description": "Top 25",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "${prometheus_datasource}"
+                      },
+                      "spec": {
+                        "expr": "topk(25,irate(node_disk_io_time_seconds_total{job=~\"integrations/(node_exporter|unix)\",cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\", device!=\"\"}[$__rate_interval]))",
+                        "legendFormat": "{{instance}}: {{device}}"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "${prometheus_datasource}"
+                      },
+                      "spec": {
+                        "expr": "avg(irate(node_disk_io_time_seconds_total{job=~\"integrations/(node_exporter|unix)\",cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\", device!=\"\"}[$__rate_interval]))",
+                        "legendFormat": "Mean"
+                      }
+                    },
+                    "refId": "B",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "timeseries",
+            "version": "v11.0.0",
+            "spec": {
+              "options": {
+                "legend": {
+                  "calcs": [
+                    "mean",
+                    "max",
+                    "lastNotNull"
+                  ],
+                  "displayMode": "table",
+                  "placement": "right"
+                },
+                "tooltip": {
+                  "mode": "multi",
+                  "sort": "desc"
+                }
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "percent",
+                  "decimals": 1,
+                  "min": 0,
+                  "max": 100,
+                  "color": {
+                    "mode": "continuous-BlYlRd"
+                  },
+                  "links": [
+                    {
+                      "title": "Drill down to this instance",
+                      "url": "/d/nodes?var-instance=${__field.labels.instance}&var-device=${__field.labels.device}&${__url_time_range}&${datasource:queryparam}"
+                    }
+                  ],
+                  "custom": {
+                    "fillOpacity": 1,
+                    "gradientMode": "scheme",
+                    "lineInterpolation": "smooth",
+                    "lineWidth": 1,
+                    "showPoints": "never"
+                  }
+                },
+                "overrides": [
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Mean"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "light-purple",
+                          "mode": "fixed"
+                        }
+                      },
+                      {
+                        "id": "custom.fillOpacity",
+                        "value": 0
+                      },
+                      {
+                        "id": "custom.lineStyle",
+                        "value": {
+                          "dash": [
+                            10,
+                            10
+                          ],
+                          "fill": "dash"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "panel-6": {
+        "kind": "Panel",
+        "spec": {
+          "id": 6,
+          "title": "Disk space usage",
+          "description": "Top 25",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "${prometheus_datasource}"
+                      },
+                      "spec": {
+                        "expr": "topk(25,100 - node_filesystem_avail_bytes{fstype!=\"\", mountpoint!=\"\", job=~\"integrations/(node_exporter|unix)\",cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\"}/node_filesystem_size_bytes{fstype!=\"\", mountpoint!=\"\", job=~\"integrations/(node_exporter|unix)\",cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\"}*100)",
+                        "legendFormat": "{{instance}}: {{mountpoint}}"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "${prometheus_datasource}"
+                      },
+                      "spec": {
+                        "expr": "avg(100 - node_filesystem_avail_bytes{fstype!=\"\", mountpoint!=\"\", job=~\"integrations/(node_exporter|unix)\",cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\"}/node_filesystem_size_bytes{fstype!=\"\", mountpoint!=\"\", job=~\"integrations/(node_exporter|unix)\",cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\"}*100)",
+                        "legendFormat": "Mean"
+                      }
+                    },
+                    "refId": "B",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "timeseries",
+            "version": "v11.0.0",
+            "spec": {
+              "options": {
+                "legend": {
+                  "calcs": [
+                    "mean",
+                    "max",
+                    "lastNotNull"
+                  ],
+                  "displayMode": "table",
+                  "placement": "right"
+                },
+                "tooltip": {
+                  "mode": "multi",
+                  "sort": "desc"
+                }
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "percent",
+                  "decimals": 1,
+                  "min": 0,
+                  "max": 100,
+                  "color": {
+                    "mode": "continuous-BlYlRd"
+                  },
+                  "links": [
+                    {
+                      "title": "Drill down to this instance",
+                      "url": "/d/nodes?var-instance=${__field.labels.instance}&var-mountpoint=${__field.labels.mountpoint}&${__url_time_range}&${datasource:queryparam}"
+                    }
+                  ],
+                  "custom": {
+                    "fillOpacity": 1,
+                    "gradientMode": "scheme",
+                    "lineInterpolation": "smooth",
+                    "lineWidth": 1,
+                    "showPoints": "never"
+                  }
+                },
+                "overrides": [
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Mean"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "light-purple",
+                          "mode": "fixed"
+                        }
+                      },
+                      {
+                        "id": "custom.fillOpacity",
+                        "value": 0
+                      },
+                      {
+                        "id": "custom.lineStyle",
+                        "value": {
+                          "dash": [
+                            10,
+                            10
+                          ],
+                          "fill": "dash"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "panel-7": {
+        "kind": "Panel",
+        "spec": {
+          "id": 7,
+          "title": "Network traffic",
+          "description": "Top 25 interfaces",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "${prometheus_datasource}"
+                      },
+                      "spec": {
+                        "expr": "topk(25, irate(node_network_receive_bytes_total{job=~\"integrations/(node_exporter|unix)\",cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\"}[$__rate_interval])*8\n# only show interfaces that had traffic change at least once during selected dashboard interval:\nand\nincrease(\n    node_network_receive_bytes_total{job=~\"integrations/(node_exporter|unix)\",cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\"}[$__range]\n    ) > 0\n)>0",
+                        "legendFormat": "{{instance}}: {{ device }} received"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "${prometheus_datasource}"
+                      },
+                      "spec": {
+                        "expr": "topk(25, irate(node_network_transmit_bytes_total{job=~\"integrations/(node_exporter|unix)\",cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\"}[$__rate_interval])*8\n# only show interfaces that had traffic change at least once during selected dashboard interval:\nand\nincrease(\n    node_network_transmit_bytes_total{job=~\"integrations/(node_exporter|unix)\",cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\"}[$__range]\n    ) > 0\n)>0",
+                        "legendFormat": "{{instance}}: {{ device }} transmitted"
+                      }
+                    },
+                    "refId": "B",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "timeseries",
+            "version": "v11.0.0",
+            "spec": {
+              "options": {
+                "legend": {
+                  "calcs": [
+                    "mean",
+                    "max",
+                    "lastNotNull"
+                  ],
+                  "displayMode": "table",
+                  "placement": "right"
+                },
+                "tooltip": {
+                  "mode": "multi",
+                  "sort": "desc"
+                }
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "bps",
+                  "decimals": 1,
+                  "noValue": "No traffic",
+                  "custom": {
+                    "axisCenteredZero": false,
+                    "axisLabel": "out(-) | in(+)",
+                    "fillOpacity": 30,
+                    "gradientMode": "opacity",
+                    "lineInterpolation": "smooth",
+                    "lineWidth": 2,
+                    "showPoints": "never"
+                  }
+                },
+                "overrides": [
+                  {
+                    "matcher": {
+                      "id": "byRegexp",
+                      "options": "/transmit|tx|out/"
+                    },
+                    "properties": [
+                      {
+                        "id": "custom.transform",
+                        "value": "negative-Y"
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "panel-8": {
+        "kind": "Panel",
+        "spec": {
+          "id": 8,
+          "title": "Network errors and dropped packets",
+          "description": "Top 25.\n\n**Network errors**:\n\nNetwork errors refer to issues that occur during the transmission of data across a network. \n\nThese errors can result from various factors, including physical issues, jitter, collisions, noise and interference.\n\nMonitoring network errors is essential for diagnosing and resolving issues, as they can indicate problems with network hardware or environmental factors affecting network quality.\n\n**Dropped packets**:\n\nDropped packets occur when data packets traveling through a network are intentionally discarded or lost due to congestion, resource limitations, or network configuration issues. \n\nCommon causes include network congestion, buffer overflows, QoS settings, and network errors, as corrupted or incomplete packets may be discarded by receiving devices.\n\nDropped packets can impact network performance and lead to issues such as degraded voice or video quality in real-time applications.\n",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "${prometheus_datasource}"
+                      },
+                      "spec": {
+                        "expr": "topk(25, irate(node_network_transmit_errs_total{job=~\"integrations/(node_exporter|unix)\",cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\"}[$__rate_interval]))>0",
+                        "legendFormat": "{{instance}}: {{ device }} errors transmitted"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "${prometheus_datasource}"
+                      },
+                      "spec": {
+                        "expr": "topk(25, irate(node_network_receive_errs_total{job=~\"integrations/(node_exporter|unix)\",cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\"}[$__rate_interval]))>0",
+                        "legendFormat": "{{instance}}: {{ device }} errors received"
+                      }
+                    },
+                    "refId": "B",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "${prometheus_datasource}"
+                      },
+                      "spec": {
+                        "expr": "topk(25, irate(node_network_transmit_drop_total{job=~\"integrations/(node_exporter|unix)\",cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\"}[$__rate_interval]))>0",
+                        "legendFormat": "{{instance}}: {{ device }} transmitted dropped"
+                      }
+                    },
+                    "refId": "C",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "${prometheus_datasource}"
+                      },
+                      "spec": {
+                        "expr": "topk(25, irate(node_network_receive_drop_total{job=~\"integrations/(node_exporter|unix)\",cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\"}[$__rate_interval]))>0",
+                        "legendFormat": "{{instance}}: {{ device }} received dropped"
+                      }
+                    },
+                    "refId": "D",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "timeseries",
+            "version": "v11.0.0",
+            "spec": {
+              "options": {
+                "legend": {
+                  "calcs": [
+                    "mean",
+                    "max",
+                    "lastNotNull"
+                  ],
+                  "displayMode": "table",
+                  "placement": "right"
+                },
+                "tooltip": {
+                  "mode": "multi",
+                  "sort": "desc"
+                }
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "pps",
+                  "decimals": 1,
+                  "noValue": "No errors",
+                  "custom": {
+                    "drawStyle": "points",
+                    "fillOpacity": 30,
+                    "gradientMode": "opacity",
+                    "lineInterpolation": "smooth",
+                    "lineWidth": 2,
+                    "pointSize": 5,
+                    "showPoints": "never"
+                  }
+                },
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-9": {
+        "kind": "Panel",
+        "spec": {
+          "id": 9,
+          "title": "Metrics",
+          "description": "Shows if metrics are being received for the selected time range.",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "$prometheus_datasource"
+                      },
+                      "spec": {
+                        "expr": "vector(1) and on() ((count(up{job=~\"$job\"} == 1) > 0) and (absent(absent(node_uname_info{job=~\"$job\"})))) or vector(0) and on() ((count(up{job=~\"$job\"}) > 0) and (absent(node_uname_info{job=~\"$job\"})))\n"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "stat",
+            "version": "v10.0.0",
+            "spec": {
+              "options": {
+                "colorMode": "background",
+                "graphMode": "none",
+                "reduceOptions": {
+                  "calcs": [
+                    "lastNotNull"
+                  ]
+                }
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "string",
+                  "mappings": [
+                    {
+                      "type": "special",
+                      "options": {
+                        "match": "null",
+                        "result": {
+                          "text": "No metrics received - Check configuration",
+                          "color": "light-red",
+                          "index": 0
+                        }
+                      }
+                    },
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 0,
+                        "to": 0,
+                        "result": {
+                          "text": "Failed to collect metrics",
+                          "color": "light-red",
+                          "index": 1
+                        }
+                      }
+                    },
+                    {
+                      "type": "range",
+                      "options": {
+                        "from": 1,
+                        "to": 1000000,
+                        "result": {
+                          "text": "Receiving metrics",
+                          "color": "light-green",
+                          "index": 2
+                        }
+                      }
+                    }
+                  ],
+                  "color": {
+                    "mode": "fixed",
+                    "fixedColor": "text"
+                  },
+                  "noValue": "No data"
+                },
+                "overrides": []
+              }
+            }
+          }
+        }
+      }
+    },
+    "layout": {
+      "kind": "GridLayout",
+      "spec": {
+        "items": [
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "x": 0,
+              "y": 0,
+              "width": 8,
+              "height": 2,
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-9"
+              }
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "x": 8,
+              "y": 0,
+              "width": 8,
+              "height": 2,
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-10"
+              }
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "x": 16,
+              "y": 0,
+              "width": 8,
+              "height": 2,
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-11"
+              }
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "x": 0,
+              "y": 3,
+              "width": 24,
+              "height": 16,
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-1"
+              }
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "x": 0,
+              "y": 10,
+              "width": 12,
+              "height": 7,
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-2"
+              }
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "x": 12,
+              "y": 10,
+              "width": 12,
+              "height": 7,
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-3"
+              }
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "x": 0,
+              "y": 17,
+              "width": 24,
+              "height": 7,
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-4"
+              }
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "x": 0,
+              "y": 24,
+              "width": 12,
+              "height": 7,
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-5"
+              }
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "x": 12,
+              "y": 24,
+              "width": 12,
+              "height": 7,
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-6"
+              }
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "x": 0,
+              "y": 31,
+              "width": 12,
+              "height": 7,
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-7"
+              }
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "x": 12,
+              "y": 31,
+              "width": 12,
+              "height": 7,
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-8"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "links": [
+      {
+        "title": "All Linux node /  dashboards",
+        "type": "dashboards",
+        "icon": "",
+        "tooltip": "",
+        "tags": [
+          "linux-node-integration"
+        ],
+        "asDropdown": true,
+        "targetBlank": false,
+        "includeVars": true,
+        "keepTime": true
+      }
+    ],
+    "liveNow": false,
+    "preload": false,
+    "tags": [
+      "linux-node-integration"
+    ],
+    "timeSettings": {
+      "timezone": "default",
+      "from": "now-30m",
+      "to": "now",
+      "autoRefresh": "30s",
+      "autoRefreshIntervals": [
+        "5s",
+        "10s",
+        "30s",
+        "1m",
+        "5m",
+        "15m",
+        "30m",
+        "1h",
+        "2h",
+        "1d"
+      ],
+      "hideTimepicker": false,
+      "fiscalYearStartMonth": 0
+    },
+    "title": "Linux node / fleet overview",
+    "variables": [
+      {
+        "kind": "DatasourceVariable",
+        "spec": {
+          "name": "prometheus_datasource",
+          "pluginId": "prometheus",
+          "refresh": "never",
+          "regex": "(?!grafanacloud-usage|grafanacloud-ml-metrics).+",
+          "current": {
+            "text": "",
+            "value": ""
+          },
+          "options": [],
+          "multi": false,
+          "includeAll": false,
+          "label": "Prometheus data source",
+          "hide": "dontHide",
+          "skipUrlSync": false,
+          "allowCustomValue": true
+        }
+      },
+      {
+        "kind": "QueryVariable",
+        "spec": {
+          "name": "cluster",
+          "current": {
+            "text": "",
+            "value": ""
+          },
+          "label": "Cluster",
+          "hide": "dontHide",
+          "refresh": "onTimeRangeChanged",
+          "skipUrlSync": false,
+          "query": {
+            "kind": "DataQuery",
+            "group": "prometheus",
+            "version": "v0",
+            "datasource": {
+              "name": "${prometheus_datasource}"
+            },
+            "spec": {
+              "__legacyStringValue": "label_values(node_uname_info{job=~\"integrations/(node_exporter|unix)\"}, cluster)"
+            }
+          },
+          "regex": "",
+          "sort": "alphabeticalAsc",
+          "options": [],
+          "multi": true,
+          "includeAll": true,
+          "allValue": ".*",
+          "allowCustomValue": true
+        }
+      },
+      {
+        "kind": "QueryVariable",
+        "spec": {
+          "name": "job",
+          "current": {
+            "text": "",
+            "value": ""
+          },
+          "label": "Job",
+          "hide": "dontHide",
+          "refresh": "onTimeRangeChanged",
+          "skipUrlSync": false,
+          "query": {
+            "kind": "DataQuery",
+            "group": "prometheus",
+            "version": "v0",
+            "datasource": {
+              "name": "${prometheus_datasource}"
+            },
+            "spec": {
+              "__legacyStringValue": "label_values(node_uname_info{job=~\"integrations/(node_exporter|unix)\",cluster=~\"$cluster\"}, job)"
+            }
+          },
+          "regex": "",
+          "sort": "alphabeticalAsc",
+          "options": [],
+          "multi": true,
+          "includeAll": true,
+          "allValue": ".+",
+          "allowCustomValue": true
+        }
+      },
+      {
+        "kind": "QueryVariable",
+        "spec": {
+          "name": "instance",
+          "current": {
+            "text": "",
+            "value": ""
+          },
+          "label": "Instance",
+          "hide": "dontHide",
+          "refresh": "onTimeRangeChanged",
+          "skipUrlSync": false,
+          "query": {
+            "kind": "DataQuery",
+            "group": "prometheus",
+            "version": "v0",
+            "datasource": {
+              "name": "${prometheus_datasource}"
+            },
+            "spec": {
+              "__legacyStringValue": "label_values(node_uname_info{job=~\"integrations/(node_exporter|unix)\",cluster=~\"$cluster\",job=~\"$job\"}, instance)"
+            }
+          },
+          "regex": "",
+          "sort": "alphabeticalAsc",
+          "options": [],
+          "multi": true,
+          "includeAll": true,
+          "allValue": ".+",
+          "allowCustomValue": true
+        }
+      },
+      {
+        "kind": "DatasourceVariable",
+        "spec": {
+          "name": "loki_datasource",
+          "pluginId": "loki",
+          "refresh": "never",
+          "regex": "(?!grafanacloud.+usage-insights|grafanacloud.+alert-state-history).+",
+          "current": {
+            "text": "",
+            "value": ""
+          },
+          "options": [],
+          "multi": false,
+          "includeAll": false,
+          "label": "Loki data source",
+          "hide": "hideVariable",
+          "skipUrlSync": false,
+          "allowCustomValue": true
+        }
+      }
+    ]
+  }
+}
